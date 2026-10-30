@@ -1,0 +1,17 @@
+U.S. AAM Resource Map — https://basilbuildsai.github.io/aam-resource-map/
+Copyright (c) 2026 Basil Yap
+
+The website content and data (the study compilation, state profiles, state aviation system plan
+ratings, agency links, and the eIPP team research in data/) are licensed under the
+Creative Commons Attribution 4.0 International License (CC BY 4.0).
+Full license: https://creativecommons.org/licenses/by/4.0/legalcode
+
+You may share and adapt this material for any purpose, provided you give appropriate credit,
+link to the license, and indicate if changes were made. Credit as:
+
+    Basil Yap, U.S. AAM Resource Map, https://basilbuildsai.github.io/aam-resource-map/ (CC BY 4.0)
+
+The studies, plans and reports listed remain the property of their publishers; this map links to
+them and does not host them. Federal sources (FAA, Federal Register, U.S. Census Bureau boundaries)
+are U.S. government public data and are not covered by this license. The data is provided as is,
+without warranty of any kind.

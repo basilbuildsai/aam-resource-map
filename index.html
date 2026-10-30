@@ -1,0 +1,965 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>U.S. AAM Resource Map</title>
+<meta name="description" content="An open resource that gathers state and local advanced air mobility (AAM) studies and tracks the FAA eVTOL Integration Pilot Program (eIPP) teams.">
+<link rel="canonical" href="https://basilbuildsai.github.io/aam-resource-map/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="U.S. AAM Resource Map">
+<meta property="og:title" content="U.S. AAM Resource Map">
+<meta property="og:description" content="An open resource that gathers state and local advanced air mobility studies, from statewide plans to MPO, county, city and airport work, and tracks the eight FAA eIPP teams.">
+<meta property="og:url" content="https://basilbuildsai.github.io/aam-resource-map/">
+<meta property="og:image" content="https://basilbuildsai.github.io/aam-resource-map/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="627">
+<meta property="og:image:alt" content="U.S. map of AAM studies by state with eIPP team routes">
+<meta name="author" content="Basil Yap">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='15.5' fill='%23256abf'/%3E%3Ctext x='16' y='22.6' text-anchor='middle' font-family='Arial,Helvetica,sans-serif' font-weight='700' font-size='17' fill='%23fff'%3EA%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..100,400..800&display=swap">
+<style>
+/* After the Ten Across map (design/ref/eipp_pin.jpg): white field, light gray land, three warm tints,
+   black route lines and dots, huge bold black figures, circle legends. Light only. */
+:root {
+  color-scheme: light;
+  /* Ten Across style: white field, light gray land, three warm tints, black marks and type */
+  --water: #FFFFFF; --land: #E3E6E8; --land-line: #FFFFFF;
+  --t1: #F2D98A; --t2: #EC9A5B; --t3: #D9512F; --pale: #F7EED3;
+  --parch: var(--t1); --parch-line: #FFFFFF; --parch-dark: var(--t2);
+  --orange: var(--t3); --orange-dark: #1E1E1E; --mark: #1E1E1E;
+  --on-water: #1E1E1E; --on-water-2: #6B6B6B;
+  --ink: #333333; --ink-2: #6B6B6B; --ink-3: #8A8A8A;
+  --paper: #FFFFFF; --rule: #E6E8EA;
+  --pad: clamp(16px, 3vw, 44px);
+  --seq-0: #E3E6E8; --seq-1: #F7EED3; --seq-2: #F2D98A; --seq-3: #EC9A5B; --seq-4: #D9512F; --seq-5: #A83A1E;
+  --county: var(--mark); --region: var(--mark); --city: var(--mark); --airport: var(--mark);
+  --lead: var(--t3); --partner: var(--t2); --route: var(--mark); --site: var(--mark);
+  --surface: var(--paper); --surface-2: #F4F5F6; --line: var(--rule); --line-strong: #8A8A8A; --accent: var(--t3);
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; background: #FFFFFF; }
+body { color: var(--ink); font-family: Archivo, system-ui, -apple-system, sans-serif; font-size: 14px; line-height: 1.45; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+a { color: inherit; text-decoration-color: #A0A6AA; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+a:hover { color: #000; text-decoration-color: #1E1E1E; }
+button, input, select { font-family: inherit; color: inherit; font-size: 13px; }
+:focus-visible { outline: 3px solid var(--orange); outline-offset: 2px; }
+.x { font-weight: 800; letter-spacing: -.035em; line-height: .95; }
+.kick { font-size: 13px; font-weight: 600; color: #6B6B6B; }
+.num { font-variant-numeric: tabular-nums; }
+
+/* header and hero on the water */
+header.top { display: flex; align-items: center; gap: 24px; flex-wrap: wrap; padding: 16px var(--pad); color: #1E1E1E; border-bottom: 1px solid #ECEEF0; box-shadow: 0 2px 10px rgba(0,0,0,.04); }
+header.top .brand { font-size: 18px; font-weight: 800; letter-spacing: -.02em; }
+header.top .meta { font-size: 12px; color: var(--on-water-2); }
+nav.tabs { display: flex; gap: 4px; margin-left: auto; }
+nav.tabs a { padding: 7px 12px; font-weight: 500; font-size: 16px; color: #1E1E1E; text-decoration: none; border-bottom: 2px solid transparent; }
+nav.tabs a:hover { border-bottom-color: #CDD2D5; }
+nav.tabs a[aria-current="page"] { border-bottom-color: var(--t3); font-weight: 700; }
+.hero { padding: clamp(28px, 5vw, 64px) var(--pad) 16px; color: #1E1E1E; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 18px 40px; align-items: end; }
+.hero { padding-top: clamp(48px, 8vw, 120px) !important; padding-bottom: clamp(32px, 4vw, 56px) !important; border-bottom: 1px solid #ECEEF0; }
+.hero h1 { margin: 10px 0 0; font-size: clamp(60px, 10vw, 156px); line-height: .9; letter-spacing: -.05em; color: #1E1E1E; }
+.hero-main .kicker + .kicker { margin-top: 10px; }
+/* grayscale VFR sectional behind the title (FAA Charlotte sectional, public domain), faded with a gradient */
+.hero { position: relative; isolation: isolate; overflow: hidden; }
+.hero::before { content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background: url("vfr.jpg") center / cover no-repeat; opacity: .32; filter: grayscale(1) contrast(.9);
+  -webkit-mask-image: linear-gradient(to left, #000 0%, rgba(0,0,0,.7) 35%, transparent 88%);
+          mask-image: linear-gradient(to left, #000 0%, rgba(0,0,0,.7) 35%, transparent 88%); }
+.hero { grid-template-columns: 1fr !important; }
+.hero h1 { white-space: nowrap; }
+.hero .corners { margin-top: 18px; padding-top: 22px; border-top: 1px solid #ECEEF0; gap: clamp(28px, 5vw, 72px); }
+@media (max-width: 700px) { .hero h1 { white-space: normal; } }
+.hero .kicker { margin: 22px 0 0; font-size: clamp(16px, 1.4vw, 19px); line-height: 1.5; max-width: 60ch; color: #444; }
+.hero .kicker a { color: #1E1E1E; font-weight: 700; text-decoration-color: var(--t3); text-decoration-thickness: 2px; }
+.corners { display: flex; gap: 32px; flex-wrap: wrap; }
+.corners .meta { font-size: 13px; font-weight: 500; color: #6B6B6B; }
+.corners .meta b { display: none; }
+.corners .big { display: block; font-weight: 800; font-size: clamp(36px, 4.4vw, 60px); line-height: .9; color: #1E1E1E; letter-spacing: -.04em; text-transform: none; }
+.corners .mark { display: none; }
+
+/* views */
+.view { display: none; }
+.view.on { display: grid; }
+.sechead { display: none; }
+.sechead[data-for="studies"], .sechead[data-for="eipp"], .sechead[data-for="about"] { display: block; padding: clamp(40px, 5vw, 72px) var(--pad) 4px; border-top: 1px solid #ECEEF0; scroll-margin-top: 0; }
+.sechead h2 { margin: 0; font-size: clamp(30px, 3vw, 42px); }
+.sechead p { margin: 8px 0 0; color: #6B6B6B; max-width: 70ch; }
+#v-about .card { box-shadow: none; border: 0; padding: 8px 0 24px; }
+/* byline footer, after the AAM Fleet Registry */
+footer.byline { border-top: 1px solid #ECEEF0; padding: clamp(48px, 6vw, 96px) var(--pad) 28px; background: #FFFFFF; }
+footer.byline h2 { margin: 0; font-size: clamp(56px, 8vw, 120px); font-weight: 800; letter-spacing: -.045em; line-height: .92; color: #1E1E1E; }
+footer.byline .tag-line { margin: 18px 0 0; font-size: 16px; font-weight: 600; color: #333; }
+footer.byline .bio { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px; margin-top: 22px; max-width: 980px; color: #555; font-size: 15px; line-height: 1.55; }
+footer.byline .bio p { margin: 0 0 10px; }
+footer.byline .links a { font-weight: 700; color: #1E1E1E; text-decoration-color: var(--t3); text-decoration-thickness: 2px; }
+footer.byline .foot { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin-top: 56px; padding-top: 16px; border-top: 1px solid #ECEEF0; font-size: 12px; color: #6B6B6B; }
+footer.byline .foot b { color: #1E1E1E; }
+@media (max-width: 760px) { footer.byline .bio, footer.byline .foot { grid-template-columns: 1fr; } }
+#v-studies, #v-eipp { grid-template-columns: 250px minmax(0, 1fr) 390px; gap: 18px; padding: 14px var(--pad) var(--pad); align-items: start; }
+.card { background: var(--paper); border: 1px solid var(--rule); padding: 14px 16px; position: relative; box-shadow: 0 8px 26px rgba(20,30,35,.05); }
+.rail .card + .card { margin-top: 12px; }
+.paper, .rail .card, .panel { background: var(--paper); }
+.rail .card::before, .panel::before { content: none; }
+.rail .card > *, .panel > * { position: relative; }
+.rail h2, .panel h2 { font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-2); margin: 0 0 8px; }
+.rail label { display: flex; align-items: center; gap: 8px; padding: 3px 0; cursor: pointer; font-size: 13px; }
+.rail input[type="checkbox"] { accent-color: #1E1E1E; }
+.rail input[type="search"], .rail select, .rail .row input { width: 100%; padding: 7px 9px; border: 1px solid #CDD2D5; border-radius: 6px; background: #fff; }
+.rail .row { display: flex; gap: 8px; align-items: center; font-size: 13px; }
+.rail .row input { width: 70px; }
+.sw { width: 13px; height: 10px; display: inline-block; flex: none; }
+.mapwrap { position: relative; padding: 0; background: transparent; border: 0; min-width: 0; }
+.mapwrap::before { display: none; }
+.mapwrap svg { width: 100%; height: auto; display: block; }
+.maptools { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; padding: 0 0 8px; color: var(--on-water); }
+.maptools .crumb { font-weight: 750; font-size: 28px; line-height: 1; letter-spacing: -.02em; color: #1E1E1E; }
+.maptools .spacer { flex: 1; }
+.maptools button, .btn, .terr button { font: 600 12px/1.2 Archivo; padding: 7px 12px; border: 1px solid #CDD2D5; background: #fff; color: #333; border-radius: 999px; cursor: pointer; }
+.maptools button:hover, .terr button:hover, .panel .btn:hover { background: #F4F5F6; }
+.panel .btn { color: var(--ink); }
+.panel .btn:hover { background: var(--surface-2); }
+.legend { display: flex; gap: 16px; flex-wrap: wrap; align-items: center; padding: 10px 0 0; color: #555; font-size: 13px; }
+.legend .ramp { display: inline-flex; gap: 0; vertical-align: middle; }
+.legend .ramp i { width: 20px; height: 10px; display: inline-block; }
+.state { cursor: pointer; }
+#map path, #emap path, #map line, #emap line, #ebmap path, #ebmap line { vector-effect: non-scaling-stroke; }
+.state.sel { stroke: #1E1E1E !important; stroke-width: 1.4 !important; }
+.state:hover { stroke: #8A8A8A; }
+#emap .state { stroke: #FFFFFF; stroke-width: 1.1; }
+#emap .pt { fill: #1E1E1E; }
+.county { fill: var(--mark); stroke: #fff; stroke-width: .4; cursor: pointer; }
+.nation { fill: none; stroke: none; }
+.county.region { fill: url(#hatchz); stroke: var(--mark); stroke-width: .5; }
+.county:hover, .county.sel { stroke: var(--t3); stroke-width: 1.6; }
+.pt { stroke: #fff; stroke-width: 1.2; cursor: pointer; }
+.pt:hover, .pt.sel { stroke: var(--t3); stroke-width: 2.2; }
+.inset-label { fill: #8A8A8A; font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
+.co-name { font-size: 11px; font-weight: 600; fill: #555; pointer-events: none; }
+.co-num { font-weight: 800; letter-spacing: -.04em; fill: #1E1E1E; pointer-events: none; }
+.co-unit { font-size: 12px; font-weight: 600; fill: #333; pointer-events: none; }
+.ld { font-size: 10.5px; fill: #555; font-weight: 500; pointer-events: none; paint-order: stroke; stroke: #fff; stroke-width: 3px; stroke-linejoin: round; }
+.ld.o { fill: #1E1E1E; font-weight: 700; }
+.tip { position: fixed; pointer-events: none; background: #fff; color: var(--ink); border: 1px solid #E1E4E6; border-radius: 6px; padding: 7px 9px; font-size: 12px; max-width: 280px; display: none; z-index: 10; box-shadow: 0 6px 18px rgba(40,55,60,.22); }
+.tip b { display: block; }
+.panel { max-height: calc(100vh - 28px); overflow: auto; position: sticky; top: 14px; padding: 22px 22px; }
+.panel h3 { margin: 0 0 6px; font-weight: 800; font-size: 34px; line-height: 1; letter-spacing: -.03em; color: #1E1E1E; }
+.panel .sub { color: var(--ink-2); margin-bottom: 10px; font-size: 13px; }
+.grp { margin-top: 16px; }
+.grp > h4 { margin: 0 0 6px; font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-2); display: flex; align-items: center; gap: 6px; }
+.study { border-top: 1px solid var(--rule); padding: 9px 0; }
+.study .t { font-weight: 650; color: #1E1E1E; }
+.study .t::before { content: ""; display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--mark); margin-right: 8px; vertical-align: 2px; }
+.study .m { color: var(--ink-3); font-size: 12px; }
+.study p { margin: 4px 0 0; color: var(--ink-2); font-size: 13px; }
+.tag { display: inline-block; font-size: 11px; font-weight: 600; padding: 1px 7px; border: 1px solid #D5D9DC; border-radius: 999px; background: transparent; color: var(--ink-2); margin: 3px 4px 0 0; text-decoration: none; }
+.tag.warn { border-style: dashed; }
+.links { margin: 8px 0 0; }
+.links .agency { font-weight: 650; margin-top: 6px; color: #1E1E1E; }
+.links ul { list-style: none; margin: 4px 0 0; padding: 0; }
+.links li { margin: 3px 0; display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap; font-size: 13px; }
+.links .k { color: var(--ink-2); font-size: 10.5px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; width: 72px; flex: none; }
+.links a.tag { background: var(--t3); border-color: var(--t3); color: #fff; }
+dl.kv { display: grid; grid-template-columns: max-content 1fr; gap: 4px 12px; margin: 8px 0; font-size: 13px; }
+dl.kv dt { color: var(--ink-2); font-size: 10.5px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; padding-top: 2px; }
+dl.kv dd { margin: 0; }
+.stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px 14px; margin: 8px 0 6px; padding-bottom: 12px; border-bottom: 1px solid var(--rule); }
+.stat b { display: block; font-weight: 800; font-size: 38px; line-height: .95; letter-spacing: -.04em; color: #1E1E1E; }
+.stat span { color: var(--ink-2); font-size: 10.5px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
+.team { border-top: 1px solid var(--rule); padding: 10px 0 10px 10px; cursor: pointer; border-left: 4px solid transparent; }
+.team:hover { background: var(--surface-2); }
+.team.sel { border-left-color: var(--t3); background: var(--surface-2); }
+.team .t { font-weight: 700; color: #1E1E1E; }
+.team .m { color: var(--ink-3); font-size: 12px; }
+.chips span { display: inline-block; border: 1px solid #D5D9DC; border-radius: 999px; padding: 1px 7px; margin: 3px 4px 0 0; font-size: 12px; font-weight: 600; color: var(--ink-2); }
+table.list { width: 100%; border-collapse: collapse; font-size: 13px; background: var(--paper); }
+table.list th, table.list td { text-align: left; padding: 7px 8px; border-bottom: 1px solid var(--rule); vertical-align: top; }
+table.list th { color: var(--ink-2); font-size: 10.5px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; position: sticky; top: 0; background: var(--paper); }
+#listview { display: none; max-height: 70vh; overflow: auto; }
+#v-about { padding: 14px var(--pad) var(--pad); }
+#v-about .card { max-width: 760px; font-size: 15px; padding: 24px 28px; }
+#v-about .card p { margin: 0 0 12px; }
+.terr { color: #555; font-size: 12px; padding: 6px 0 0; }
+.terr button { padding: 3px 8px; margin: 2px; }
+
+/* eIPP band, after the Ten Across "Vulnerability" map: white field, light gray states, three warm tints,
+   black route line with dot stops, a huge black figure, circle legend, faint contour lines */
+.band { position: relative; background: #FFFFFF; color: #1E1E1E; border-top: 1px solid #D9DEE0; }
+.band-graphic { position: sticky; top: 0; height: 100vh; overflow: hidden; background: #FFFFFF; }
+.band-steps { position: relative; margin-top: -100vh; pointer-events: none; }
+.step { min-height: 100vh; display: flex; align-items: flex-end; justify-content: flex-end; padding: 0 var(--pad) 9vh; }
+.step:first-child { min-height: 110vh; }
+.step:last-child { min-height: 120vh; }
+.step .card2 { pointer-events: auto; width: 280px; background: rgba(255,255,255,.94); border: 1px solid #E1E4E6; box-shadow: 0 8px 26px rgba(20,30,35,.08); padding: 16px 18px; font-size: 13.5px; color: #444; opacity: .35; transition: opacity .3s; }
+.step.on .card2 { opacity: 1; }
+.card2 .n { font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: #8A8A8A; }
+.card2 h3 { margin: 4px 0 6px; font-size: 18px; line-height: 1.2; color: #1E1E1E; }
+.card2 p { margin: 6px 0 0; }
+.card2 .st { color: #1E1E1E; font-weight: 600; }
+.card2 a { color: #1E1E1E; font-size: 12px; }
+.band .topo { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+.band-in { position: relative; display: grid; grid-template-columns: minmax(220px, 300px) minmax(0, 1fr) 240px; grid-template-rows: auto 1fr auto; gap: 0 28px; padding: clamp(28px, 4vh, 56px) var(--pad); height: 100%; }
+.band-head { grid-column: 1; grid-row: 1; padding-top: 4vh; }
+.band-head h2 { margin: 0; font-size: clamp(30px, 3vw, 42px); font-weight: 750; letter-spacing: -.02em; line-height: 1; }
+.band-k { margin: 8px 0 0; color: #6B6B6B; font-size: 14px; }
+.band-map { grid-column: 1 / 3; grid-row: 1 / 4; justify-self: end; width: min(100%, 1240px, calc((100vh - 40px) * 1.6)); padding: 0 0 0 clamp(20px, 4vw, 72px); align-self: center; }
+/* fade all four edges to nothing, so a zoomed team map has no hard box edge */
+.band-map svg { width: 100%; height: auto; display: block; overflow: hidden;
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 9%, #000 91%, transparent), linear-gradient(to bottom, transparent, #000 9%, #000 91%, transparent);
+  -webkit-mask-composite: source-in;
+          mask-image: linear-gradient(to right, transparent, #000 9%, #000 91%, transparent), linear-gradient(to bottom, transparent, #000 9%, #000 91%, transparent);
+          mask-composite: intersect; }
+.band-fig { grid-column: 1 / 3; grid-row: 3; position: relative; z-index: 2; pointer-events: none; margin-top: -120px; }
+.band-fig .huge { font-size: clamp(72px, 10vw, 150px); font-weight: 800; letter-spacing: -.045em; line-height: .9; font-stretch: 100%; }
+.band-fig .huge.lead { font-size: clamp(40px, 5.2vw, 84px); line-height: .95; letter-spacing: -.035em; max-width: 11ch; }
+.band-fig .huge.lead.long { font-size: clamp(34px, 4.2vw, 66px); }
+/* team lead's logo above the headline, drawn solid black to match the page; logos belong to their agencies */
+.band-fig .lead-logo { display: block; height: 48px; max-width: 260px; object-fit: contain; object-position: left bottom; margin-bottom: 16px; filter: brightness(0); opacity: .9; }
+.band-fig .lead-logo[hidden] { display: none; }
+/* FAA-listed partner logos under the team details map, solid black like the lead logos */
+.partners { margin-top: 16px; padding: 18px 20px 20px; }
+.partners h2 { font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-2); margin: 0 0 14px; }
+.plogos { display: flex; flex-wrap: wrap; gap: 22px 34px; align-items: flex-end; }
+.plogo { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; }
+.plogo img { height: 30px; max-width: 150px; object-fit: contain; object-position: left bottom; filter: brightness(0); opacity: .9; }
+.plogo span { font-size: 11px; color: var(--ink-2); }
+.partners .more { margin: 14px 0 0; font-size: 12px; color: var(--ink-2); }
+.band-fig .lead-logo.gray { filter: grayscale(1) contrast(1.15); opacity: 1; }
+.band-fig p { margin: 10px 0 0; color: #555; font-size: 15px; max-width: 36ch; }
+.band-fig a { display: inline-block; margin-top: 12px; font-size: 12px; color: #555; pointer-events: auto; text-decoration-color: #999; }
+.band-legend { grid-column: 3; grid-row: 1 / 3; align-self: start; padding-top: 4vh; font-size: 14px; color: #555; }
+.lgt { font-size: 14px; color: #555; line-height: 1.35; margin-bottom: 14px; }
+.lgk, .teamlist { list-style: none; margin: 0; padding: 0; }
+.lgk li { display: flex; align-items: center; gap: 12px; margin: 0 0 12px; }
+.lgk i { width: 20px; height: 20px; border-radius: 50%; display: inline-block; flex: none; }
+.teamlist li { margin: 0; }
+.teamlist button { all: unset; cursor: pointer; display: flex; align-items: center; gap: 10px; padding: 5px 0; font-size: 13.5px; color: #333; }
+.teamlist button::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: #1E1E1E; flex: none; }
+.teamlist button[aria-pressed="true"] { font-weight: 700; color: #000; }
+.teamlist button[aria-pressed="true"]::before { background: #D9512F; box-shadow: 0 0 0 3px #F6C7B6; }
+.teamlist button:focus-visible { outline: 2px solid #D9512F; outline-offset: 3px; }
+#ebmap .st { stroke: #FFFFFF; stroke-width: 1.2; cursor: pointer; transition: fill .2s; }
+#ebmap .st:hover { stroke: #8A8A8A; }
+@media (max-width: 1100px) {
+  .band-in { grid-template-columns: 1fr; grid-template-rows: auto auto 1fr; padding: 18px 16px; }
+  .band-legend { display: none; }
+  .band-fig .huge { font-size: 56px; }
+  .step { justify-content: center; padding: 0 16px 6vh; }
+  .band-head, .band-map, .band-fig, .band-legend { grid-column: 1; grid-row: auto; padding: 0; margin: 0; }
+  .band-map { margin: 16px 0; }
+}
+@media (max-width: 1100px) {
+  #v-studies, #v-eipp { grid-template-columns: minmax(0, 1fr); padding: 10px 16px 16px; }
+  .panel { max-height: none; position: static; }
+  #v-studies > .rail { order: 2; }
+  #v-studies > .panel { order: 1; }
+  nav.tabs { margin-left: 0; }
+  .hero { grid-template-columns: 1fr; }
+  .corners { gap: 22px; }
+}
+</style>
+</head>
+<body>
+<header class="top">
+  <span class="brand">U.S. AAM Resource Map</span>
+  <span class="meta" id="asof"></span>
+  <nav class="tabs" aria-label="Views">
+    <a href="#studies" data-view="studies">Studies</a>
+    <a href="#eipp" data-view="eipp">eIPP teams</a>
+    <a href="#eipp/details" data-view="details">Team details</a>
+    <a href="#about" data-view="about">About</a>
+  </nav>
+</header>
+<section class="hero">
+  <div class="hero-main">
+    <div class="kick">An open resource for advanced air mobility</div>
+    <h1 class="x">U.S. AAM<br>Resource Map</h1>
+    <p class="kicker" id="hero-lede">This map gathers the advanced air mobility studies that states and local governments have published, from statewide plans and aviation system plans to MPO, county, city and airport work. It also tracks the eight teams in the FAA eVTOL Integration Pilot Program (eIPP), with their states, partners and routes.</p>
+    <p class="kicker">It is a free resource, and everything is open source. The page, its code and the full dataset are on <a href="https://github.com/basilbuildsai/aam-resource-map" target="_blank" rel="noopener">GitHub</a>, and every study links to the publisher's own copy.</p>
+  </div>
+  <div class="corners">
+    <div class="meta"><span class="big num" id="h-studies">&nbsp;</span>AAM studies</div>
+    <div class="meta"><span class="big num" id="h-states">&nbsp;</span>States</div>
+    <div class="meta"><span class="big num" id="h-sasp">&nbsp;</span>System plans with AAM</div>
+    <div class="meta"><span class="big num" id="h-eipp">&nbsp;</span>eIPP teams</div>
+  </div>
+</section>
+
+<main>
+<div class="sechead viewhead" data-for="studies" id="studies-head"><div><h2 class="x">AAM studies by place</h2><p>Click a state to zoom in and list its studies, legislation, aviation system plan and where its lead agency posts. Counties, regional bodies, cities and airports draw on top.</p></div></div>
+<section class="view on" id="v-studies">
+  <aside class="rail">
+    <div class="card">
+      <h2>Search</h2>
+      <input type="search" id="q" placeholder="Title, agency, place">
+    </div>
+    <div class="card">
+      <h2>Layers</h2>
+      <label><input type="checkbox" id="L-state" checked> Shade states by</label>
+      <select id="shade" aria-label="Shade states by" style="margin:2px 0 6px 24px;width:calc(100% - 24px)">
+        <option value="count">Number of AAM studies</option>
+        <option value="sasp">AAM in state aviation system plan</option>
+      </select>
+      <label><input type="checkbox" id="L-county" checked><span class="sw" style="background:#1E1E1E"></span> County studies</label>
+      <label><input type="checkbox" id="L-region" checked><span class="sw" style="background:repeating-linear-gradient(45deg,#1E1E1E 0 1.5px,#fff 1.5px 4px);border:1px solid #1E1E1E"></span> Regional (MPO, RPO, COG)</label>
+      <label><input type="checkbox" id="L-city" checked><span class="sw" style="background:#1E1E1E;border-radius:50%;width:10px;height:10px"></span> City studies</label>
+      <label><input type="checkbox" id="L-airport" checked><span class="sw" style="background:#1E1E1E;width:10px;height:10px"></span> Airport studies</label>
+      <label><input type="checkbox" id="L-uas"> Include drone (UAS) documents</label>
+      <label><input type="checkbox" id="L-eipp"> Outline eIPP states</label>
+    </div>
+    <div class="card">
+      <h2>Filter</h2>
+      <select id="ftype" aria-label="Study type"><option value="">All study types</option></select>
+      <div class="row" style="margin-top:10px"><span>Years</span><input id="y0" type="number" aria-label="From year"><span>to</span><input id="y1" type="number" aria-label="To year"></div>
+      <label style="margin-top:8px"><input type="checkbox" id="fver"> Verified links only</label>
+    </div>
+  </aside>
+  <div>
+    <div class="card mapwrap">
+      <div class="maptools">
+        <span class="crumb" id="crumb">United States</span>
+        <span class="spacer"></span>
+        <button type="button" id="reset">Reset view</button>
+        <button type="button" id="togglelist">Show as list</button>
+      </div>
+      <svg id="map" viewBox="0 0 975 610" role="img" aria-label="Map of the United States showing AAM studies"></svg>
+      <div id="listview"></div>
+      <div class="legend" id="legend"></div>
+      <div class="terr" id="terr"></div>
+    </div>
+  </div>
+  <aside class="card panel" id="panel" aria-live="polite"></aside>
+</section>
+
+<section class="band" id="eippband" aria-label="eIPP teams map">
+  <div class="band-graphic">
+    <svg class="topo" id="ebtopo" aria-hidden="true"></svg>
+    <div class="band-in">
+      <div class="band-head"><h2>eIPP teams</h2><p class="band-k">FAA eVTOL Integration Pilot Program</p></div>
+      <div class="band-map"><svg id="ebmap" viewBox="0 0 975 610" role="img" aria-label="Map of eIPP team states and routes"></svg></div>
+      <div class="band-fig"><img class="lead-logo" id="eb-logo" alt="" hidden><div class="huge num" id="eb-num"></div><p id="eb-sub"></p></div>
+      <div class="band-legend"><div class="lgt" id="eb-lgt"></div><ul class="lgk" id="eb-lgk"></ul><div class="lgt" style="margin-top:20px">Jump to a team</div><ul class="teamlist" id="eb-teams"></ul></div>
+    </div>
+  </div>
+  <div class="band-steps" id="eb-steps"></div>
+</section>
+<div class="sechead viewhead" data-for="eipp" id="team-details"><div><h2 class="x">eIPP team details</h2><p>Pick a team for its lead and partner states, companies, other partners, sites, routes, milestones and where the lead agency posts.</p></div></div>
+<section class="view on" id="v-eipp">
+  <aside class="rail">
+    <div class="card"><h2>Teams</h2><div id="teams"></div></div>
+  </aside>
+  <div>
+    <div class="card mapwrap">
+      <div class="maptools"><span class="crumb" id="ecrumb">All eight teams</span><span class="spacer"></span><button type="button" id="ereset">All teams</button></div>
+      <svg id="emap" viewBox="0 0 975 610" role="img" aria-label="Map of eIPP team states and sites"></svg>
+      <div class="legend" id="elegend"></div>
+    </div>
+    <div class="card partners" id="epartners"></div>
+  </div>
+  <aside class="card panel" id="epanel" aria-live="polite"></aside>
+</section>
+
+<div class="sechead viewhead" data-for="about" id="about"><div><h2 class="x">About this map</h2></div></div>
+<section class="view on" id="v-about">
+  <div class="card">
+    <p>This map lists public advanced air mobility (AAM) studies tied to a specific place: a state, a group of states, a regional planning body (MPO, RPO, COG or TPO), a county, a city or an airport. Further down, the page walks through the eight teams the FAA selected on March 9, 2026 for the eVTOL Integration Pilot Program (eIPP), one team at a time, with their partner states, companies, sites and routes.</p>
+    <p>Drone (UAS) program documents, such as state DOT drone manuals and drone task force reports, are kept separate from AAM studies. Turn on "Include drone (UAS) documents" under Layers to see them.</p>
+    <p>Each study links to the publishing agency's own copy where one is online. Records marked <span class="tag warn">link not checked</span> were found in the literature but their link has not been confirmed.</p>
+    <h2 style="margin-top:18px">Sources</h2>
+    <ul id="srcs"></ul>
+    <p>Map boundaries: U.S. Census Bureau cartographic boundaries via <a href="https://github.com/topojson/us-atlas">us-atlas</a>. Alaska and Hawaii are shown as insets, not to scale.</p>
+    <p>Title background: FAA VFR sectional chart (public domain). Team lead logos come from each agency's website or Wikimedia Commons, checked against the agency's LinkedIn page, belong to those agencies, and are shown in black only to identify each team. Partner company logos come from Wikimedia Commons, each company's website or its LinkedIn page and belong to those companies.</p>
+    <p>Spotted a missing study or a broken link? <a href="https://github.com/basilbuildsai/aam-resource-map/issues" target="_blank" rel="noopener">Open an issue on GitHub</a> or message me on LinkedIn.</p>
+  </div>
+</section>
+</main>
+<footer class="byline">
+  <h2>Built by<br>Basil Yap</h2>
+  <p class="tag-line">Accelerating autonomy and AI in aviation · Building open-source projects</p>
+  <div class="bio">
+    <p>I've spent 17 years helping drones and advanced air mobility aircraft into the national airspace. States, regions, counties and cities now publish AAM plans faster than anyone can follow, so I built one map that keeps them all in view, along with the FAA eIPP teams.</p>
+    <div>
+      <p>Every study links to the publisher's own copy. The data comes from public agency documents, FAA releases and news coverage. Corrections, missing studies and questions are welcome on LinkedIn.</p>
+      <p class="links"><a href="https://www.linkedin.com/in/basil-yap-461b1975/" target="_blank" rel="noopener">LinkedIn</a></p>
+    </div>
+  </div>
+  <div class="foot"><div><b>U.S. AAM Resource Map</b><br>Open source, built from public documents</div><div>basilbuildsai.github.io</div><div>&copy; 2026 Basil Yap</div></div>
+</footer>
+<div class="tip" id="tip"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/3.0.2/topojson.min.js"></script>
+<script>
+const FIPS = {AL:"01",AK:"02",AZ:"04",AR:"05",CA:"06",CO:"08",CT:"09",DE:"10",DC:"11",FL:"12",GA:"13",HI:"15",ID:"16",IL:"17",IN:"18",IA:"19",KS:"20",KY:"21",LA:"22",ME:"23",MD:"24",MA:"25",MI:"26",MN:"27",MS:"28",MO:"29",MT:"30",NE:"31",NV:"32",NH:"33",NJ:"34",NM:"35",NY:"36",NC:"37",ND:"38",OH:"39",OK:"40",OR:"41",PA:"42",RI:"44",SC:"45",SD:"46",TN:"47",TX:"48",UT:"49",VT:"50",VA:"51",WA:"53",WV:"54",WI:"55",WY:"56",AS:"60",GU:"66",MP:"69",PR:"72",VI:"78"};
+const POSTAL = Object.fromEntries(Object.entries(FIPS).map(([k, v]) => [v, k]));
+const TERRITORIES = ["PR", "GU", "VI", "AS", "MP"];
+const TERR_NAMES = {PR: "Puerto Rico", GU: "Guam", VI: "U.S. Virgin Islands", AS: "American Samoa", MP: "Northern Mariana Islands"};
+const LEVEL_LABEL = {state: "Statewide", multistate: "Multistate", region: "Regional (MPO, RPO, COG, TPO)", county: "County", city: "City", airport: "Airport"};
+const SASP_LEVELS = ["none", "mention", "section", "chapter", "appendix", "standalone"];
+const SASP_LABEL = {none: "none or no plan found", mention: "brief mention", section: "section", chapter: "chapter", appendix: "appendix", standalone: "standalone element"};
+const LEVEL_ORDER = ["state", "multistate", "region", "county", "city", "airport"];
+// Matches the projection us-atlas used to pre-project the *-albers-10m files
+const proj = d3.geoAlbersUsa().scale(1300).translate([487.5, 305]);
+const path = d3.geoPath();
+const tip = document.getElementById("tip");
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"}[c]));
+
+let topo, stateFeats, countyFeats, countyName = {}, stateName = {};
+let S = {studies: [], states: {}}, E = {teams: []};
+const ui = {view: "studies", state: null, county: null, point: null, team: null, list: false};
+
+function showTip(ev, html) {
+  tip.innerHTML = html; tip.style.display = "block";
+  const x = Math.min(ev.clientX + 14, innerWidth - tip.offsetWidth - 8);
+  const y = Math.min(ev.clientY + 14, innerHeight - tip.offsetHeight - 8);
+  tip.style.left = x + "px"; tip.style.top = y + "px";
+}
+const hideTip = () => { tip.style.display = "none"; };
+
+// ---------- filters ----------
+function filtered() {
+  const q = document.getElementById("q").value.trim().toLowerCase();
+  const t = document.getElementById("ftype").value;
+  const y0 = +document.getElementById("y0").value || 0, y1 = +document.getElementById("y1").value || 9999;
+  const ver = document.getElementById("fver").checked;
+  const uas = document.getElementById("L-uas").checked;
+  return S.studies.filter(s =>
+    (uas || s.topic !== "uas") && (!t || s.type === t) && (!ver || s.verified) &&
+    (s.year == null ? !(document.getElementById("y0").value || document.getElementById("y1").value) : s.year >= y0 && s.year <= y1) &&
+    (!q || [s.title, s.publisher, s.authors_or_consultant, s.place, s.summary, s.state].join(" ").toLowerCase().includes(q)));
+}
+const inState = (s, st) => s.state === st || (s.states || []).includes(st);
+
+// ---------- studies map ----------
+function zoomFor(st) {
+  const f = st && stateFeats.find(f => POSTAL[f.id] === st);
+  if (!f) return {k: 1, x: 0, y: 0};
+  const [[x0, y0], [x1, y1]] = path.bounds(f);
+  const k = Math.min(8, 0.85 / Math.max((x1 - x0) / 975, (y1 - y0) / 610));
+  return {k, x: 975 / 2 - k * (x0 + x1) / 2, y: 610 / 2 - k * (y0 + y1) / 2};
+}
+// White field and hatch patterns shared by both maps; hatch keeps a constant on-screen width at zoom k
+function atlasDefs(svg, k) {
+  svg.append("defs").html(`
+    <pattern id="hatchz" width="5" height="5" patternUnits="userSpaceOnUse" patternTransform="scale(${1 / k}) rotate(45)"><rect width="5" height="5" fill="#FFFFFF" fill-opacity=".55"/><rect width="1.6" height="5" fill="#1E1E1E"/></pattern>
+    <pattern id="lowhatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="scale(${1 / k}) rotate(45)"><rect width="6" height="6" fill="#E3E6E8"/><rect width="2.5" height="6" fill="#F2D98A"/></pattern>`);
+  svg.append("rect").attr("width", 975).attr("height", 610).attr("fill", "#FFFFFF");
+}
+// State name, big condensed figure and unit, as in the reference's country labels
+function callout(g, [x, y], nm, num, unit, size, anchor = "middle") {
+  const c = g.append("g").attr("pointer-events", "none");
+  c.append("text").attr("x", x).attr("y", y).attr("class", "co-name").attr("text-anchor", anchor).text(nm.toUpperCase());
+  const n = c.append("text").attr("x", x).attr("y", y + size * .95).attr("class", "co-num").attr("font-size", size).attr("text-anchor", anchor).text(num);
+  const w = n.node().getComputedTextLength();
+  const nx = anchor === "middle" ? x - w / 2 - 22 : x;
+  n.attr("x", nx + (anchor === "middle" ? w / 2 : 0));
+  c.append("text").attr("x", nx + w + 4).attr("y", y + size * .95).attr("class", "co-unit").text(unit);
+}
+// Dotted orange leader from an anchor to a small label
+function leader(g, [ax, ay], [lx, ly], lines, anchor) {
+  const right = lx >= ax, c = g.append("g").attr("pointer-events", "none");
+  c.append("line").attr("x1", ax).attr("y1", ay).attr("x2", lx).attr("y2", ly).attr("stroke", "#1E1E1E").attr("stroke-width", 1);
+  c.append("circle").attr("cx", ax).attr("cy", ay).attr("r", 3).attr("fill", "#1E1E1E").attr("stroke", "#fff");
+  // centered labels sit fully above a top-row leader end and below a bottom-row one
+  const n = lines.filter(Boolean).length, ty = anchor !== "middle" ? ly - 3 : ly < 300 ? ly - 6 - 12 * (n - 1) : ly + 14;
+  const tx = c.append("text").attr("y", ty).attr("text-anchor", anchor || (right ? "start" : "end"));
+  lines.filter(Boolean).forEach((l, i) => tx.append("tspan").attr("x", anchor === "middle" ? lx : lx + (right ? 4 : -4)).attr("dy", i ? 12 : 0).attr("class", i === 0 ? "ld o" : "ld").text(l));
+}
+// Logo files in logos/, by eIPP team id (from Wikimedia Commons or the agency's own site)
+// [file, display height in px, gray]: compact marks get more height so every logo reads at a similar size.
+// Logos are drawn solid black; "gray" keeps grayscale tones where a solid fill would merge the parts (the NCDOT seal).
+// Checked against each agency's website and LinkedIn page, 2026-10-29.
+const LEAD_LOGO = {panynj: ["panynj.svg", 52], txdot: ["txdot.svg", 70], udot: ["udot.svg", 46], penndot: ["penndot.svg", 44],
+  ladotd: ["ladotd.png", 50], fdot: ["fdot.png", 48], ncdot: ["ncdot.svg", 84, true], abq: ["abq.svg", 50]};
+const SASP_FILL = {none: null, mention: "#F7EED3", section: "#F2D98A", chapter: "#EC9A5B", appendix: "#D9512F", standalone: "#D9512F"};
+const countTint = n => !n ? null : n >= 10 ? "var(--t3)" : n >= 3 ? "var(--t2)" : "var(--t1)";
+
+function drawStudiesMap() {
+  const svg = d3.select("#map"); svg.selectAll("*").remove();
+  const list = filtered();
+  const on = id => document.getElementById(id).checked;
+  const counts = {};
+  for (const s of list) for (const st of new Set([s.state, ...(s.states || [])])) counts[st] = (counts[st] || 0) + 1;
+  const bySasp = document.getElementById("shade").value === "sasp";
+  const eippStates = new Set(E.teams.flatMap(t => t.states.filter(x => x.confidence !== "low").map(x => x.state)));
+  const z = zoomFor(ui.state);
+  atlasDefs(svg, z.k);
+  // parchment for the subject: states with a study, or by system plan coverage, or the zoomed state
+  const fillOf = st => {
+    if (z.k > 1) return st === ui.state ? "var(--pale)" : null;
+    if (!on("L-state")) return null;
+    if (bySasp) { const p = (S.states[st] || {}).system_plan; return p ? SASP_FILL[p.aam_content] : null; }
+    return countTint(counts[st]);
+  };
+
+  const root = svg.append("g").attr("transform", `translate(${z.x},${z.y}) scale(${z.k})`);
+  // The AK and HI insets sit beside the Southwest in projected space; hide them when zoomed elsewhere
+  const shown = z.k > 1 ? stateFeats.filter(f => !["02", "15"].includes(f.id) || POSTAL[f.id] === ui.state) : stateFeats;
+  const hover = sel => sel
+    .on("mousemove", (ev, d) => {
+      const st = POSTAL[d.id], sp = (S.states[st] || {}).system_plan;
+      showTip(ev, `<b>${esc(d.properties.name)}</b>${counts[st] || 0} studies${sp ? `<br>System plan ${esc(sp.edition_year || "")}: AAM ${esc(SASP_LABEL[sp.aam_content])}` : ""}`);
+    })
+    .on("mouseleave", hideTip)
+    .on("click", (ev, d) => { selectState(POSTAL[d.id]); });
+  root.append("g").selectAll("path").data(shown.filter(f => !fillOf(POSTAL[f.id]))).join("path")
+    .attr("class", "state").attr("d", path).attr("fill", "var(--land)").attr("stroke", "var(--land-line)").attr("stroke-width", .8).call(hover);
+  root.append("g").selectAll("path").data(shown.filter(f => fillOf(POSTAL[f.id]))).join("path")
+    .attr("class", d => "state" + (ui.state === POSTAL[d.id] ? " sel" : "")).attr("d", path).attr("fill", d => fillOf(POSTAL[d.id]))
+    .attr("stroke", "#FFFFFF").attr("stroke-width", 1.1).attr("fill-opacity", .9).call(hover);
+
+  if (z.k > 1) root.append("path").attr("pointer-events", "none").attr("fill", "none").attr("stroke", "#FFFFFF").attr("stroke-width", .8)
+    .datum(topojson.mesh(topo, topo.objects.counties, (a, b) => a !== b && a.id.slice(0, 2) === FIPS[ui.state])).attr("d", path);
+
+  // county studies in flat orange, regional bodies hatched
+  const cty = {}, reg = {};
+  for (const s of list) {
+    if (s.level === "county" && on("L-county")) for (const f of s.counties) (cty[f] ||= []).push(s);
+    if (s.level === "region" && on("L-region")) for (const f of s.counties) (reg[f] ||= []).push(s);
+  }
+  root.append("g").selectAll("path").data(countyFeats.filter(f => cty[f.id] || reg[f.id]).sort((a, b) => !!cty[a.id] - !!cty[b.id])).join("path")
+    .attr("class", d => "county" + (cty[d.id] ? "" : " region") + (ui.county === d.id ? " sel" : ""))
+    .attr("d", path)
+    .on("mousemove", (ev, d) => {
+      const n = (cty[d.id] || []).length, r = (reg[d.id] || []).length;
+      showTip(ev, `<b>${esc(countyName[d.id])}, ${POSTAL[d.id.slice(0, 2)]}</b>${n ? n + " county stud" + (n > 1 ? "ies" : "y") : ""}${n && r ? "<br>" : ""}${r ? r + " regional stud" + (r > 1 ? "ies" : "y") : ""}`);
+    })
+    .on("mouseleave", hideTip)
+    .on("click", (ev, d) => { selectCounty(d.id); });
+
+  if (on("L-eipp")) {
+    root.append("g").selectAll("path").data(stateFeats.filter(f => eippStates.has(POSTAL[f.id]))).join("path")
+      .attr("d", path).attr("fill", "none").attr("stroke", "#1E1E1E").attr("stroke-width", 1.4).attr("stroke-dasharray", "4 3").attr("pointer-events", "none");
+  }
+
+  // points: city circles, airport squares, regional bodies as diamonds at their main city
+  const pts = [];
+  for (const s of list) {
+    if (s.lat == null || s.lon == null) continue;
+    if (!["city", "airport", "region"].includes(s.level) || !on("L-" + s.level)) continue;
+    const xy = proj([s.lon, s.lat]); if (!xy) continue;
+    pts.push({s, x: xy[0], y: xy[1]});
+  }
+  // stack studies at the same spot into one mark
+  const spots = d3.groups(pts, p => `${p.s.level}|${p.x.toFixed(0)}|${p.y.toFixed(0)}`).map(([k, ps]) => ({level: ps[0].s.level, x: ps[0].x, y: ps[0].y, items: ps.map(p => p.s), key: k}));
+  const sym = {city: d3.symbolCircle, airport: d3.symbolSquare, region: d3.symbolDiamond};
+  root.append("g").selectAll("path").data(spots.sort((a, b) => b.items.length - a.items.length)).join("path")
+    .attr("class", d => "pt" + (ui.point === d.key ? " sel" : ""))
+    .attr("transform", d => `translate(${d.x},${d.y}) scale(${1 / Math.sqrt(z.k)})`)
+    .attr("d", d => d3.symbol(sym[d.level], 46 + 22 * Math.min(d.items.length - 1, 4))())
+    .attr("fill", "var(--mark)")
+    .on("mousemove", (ev, d) => showTip(ev, `<b>${esc(d.items[0].place || d.items[0].publisher || "")}</b>${d.items.length > 1 ? d.items.length + " studies" : esc(d.items[0].title)}`))
+    .on("mouseleave", hideTip)
+    .on("click", (ev, d) => { ui.point = d.key; ui.county = null; renderPanel({title: d.items[0].place || d.items[0].publisher, sub: LEVEL_LABEL[d.level], items: d.items}); drawStudiesMap(); });
+
+  const lab = svg.append("g");
+  const at = ([x, y]) => [z.x + x * z.k, z.y + y * z.k];
+  if (z.k === 1) {
+    svg.append("text").attr("class", "inset-label").attr("x", 120).attr("y", 600).text("Alaska (not to scale)");
+    svg.append("text").attr("class", "inset-label").attr("x", 300).attr("y", 600).text("Hawaii");
+  } else {
+    // zoomed: leaders to up to six local studies. Northern anchors label in the top row, southern ones in the
+    // bottom row (at most three per row), each row in equal slots ordered by x so labels never overlap or clip
+    const seen = new Set();
+    const loc = list.filter(s => inState(s, ui.state) && s.lat != null && ["region", "county", "city", "airport"].includes(s.level) && !seen.has(s.place) && seen.add(s.place))
+      .slice(0, 6).map(s => ({s, a: at(proj([s.lon, s.lat]) || [0, 0])})).filter(d => d.a[0] > 0).sort((p, q) => p.a[1] - q.a[1]);
+    const half = Math.min(3, Math.max(loc.length - 3, Math.ceil(loc.length / 2)));
+    [[loc.slice(0, half), 44], [loc.slice(half), 556]].forEach(([row, y]) => {
+      row.sort((p, q) => p.a[0] - q.a[0]);
+      const slot = 860 / Math.max(row.length, 1);
+      row.forEach(({s, a}, i) => {
+        const short = s.title.replace(/\s*\(NCDOT AAM Plann.*\)/, "").replace("Advanced Air Mobility", "AAM");
+        leader(lab, a, [58 + slot * (i + .5), y], [s.place || "", short.length > 34 ? short.slice(0, 33) + "…" : short, s.status || (s.year ? String(s.year) : "")], "middle");
+      });
+    });
+  }
+
+  const leg = document.getElementById("legend");
+  const dot = c => `<i style="display:inline-block;width:16px;height:16px;border-radius:50%;background:${c};vertical-align:-3px;margin-right:6px"></i>`;
+  const marks = `<span><i class="sw" style="background:#1E1E1E"></i> County</span><span><i class="sw" style="background:repeating-linear-gradient(45deg,#1E1E1E 0 1.5px,#fff 1.5px 4px);border:1px solid #1E1E1E"></i> Regional body</span><span><i class="sw" style="background:#1E1E1E;width:9px;height:9px;border-radius:50%"></i> City</span><span><i class="sw" style="background:#1E1E1E;width:9px;height:9px"></i> Airport</span>`;
+  leg.innerHTML = bySasp
+    ? `<span>AAM in the state aviation system plan:</span>${[["mention", "Brief mention"], ["section", "Section"], ["chapter", "Chapter"], ["standalone", "Appendix or standalone"]].map(([l, n]) => `<span>${dot(SASP_FILL[l])}${n}</span>`).join("")}`
+    : `<span>Studies per state:</span><span>${dot("var(--t3)")}10 or more</span><span>${dot("var(--t2)")}3 to 9</span><span>${dot("var(--t1)")}1 to 2</span>${marks}`;
+  const terr = TERRITORIES.filter(t => counts[t]);
+  document.getElementById("terr").innerHTML = terr.length ? "Territories: " + terr.map(t => `<button type="button" data-st="${t}">${TERR_NAMES[t]} (${counts[t]})</button>`).join("") : "";
+  document.querySelectorAll("#terr button").forEach(b => b.onclick = () => selectState(b.dataset.st));
+  renderList(list);
+}
+
+function renderList(list) {
+  const el = document.getElementById("listview");
+  el.innerHTML = `<table class="list"><thead><tr><th>State</th><th>Level</th><th>Study</th><th>Year</th></tr></thead><tbody>${
+    list.map(s => `<tr><td>${s.state}</td><td>${esc(LEVEL_LABEL[s.level])}${s.place ? "<br><span class=m>" + esc(s.place) + "</span>" : ""}</td><td>${studyLink(s)}<div class="m">${esc(s.publisher || "")}</div></td><td>${s.year || ""}</td></tr>`).join("")}</tbody></table>`;
+}
+
+const host = u => { try { return new URL(u).hostname.replace(/^www\./, ""); } catch (e) { return u; } };
+// LinkedIn, X, Instagram and websites for a lead agency
+function linksHTML(a) {
+  if (!a) return "";
+  const acct = (label, x) => x && x.url ? `<li><span class="k">${label}</span><a href="${esc(x.url)}" target="_blank" rel="noopener">${esc(x.handle || x.url)}</a>${x.level === "parent" ? ' <span class="tag">agency-wide account</span>' : ""}${x.posts_aam ? ` <a class="tag" href="${esc(x.evidence || x.url)}" target="_blank" rel="noopener">posts on AAM</a>` : ""}</li>` : "";
+  const sites = (a.websites || []).filter(w => w.url).map(w => `<li><span class="k">Website</span><a href="${esc(w.url)}" target="_blank" rel="noopener">${esc(w.label || host(w.url))}</a></li>`).join("");
+  const body = sites + acct("LinkedIn", a.linkedin) + acct("X", a.x) + acct("X (aviation)", a.x_aviation) + acct("Instagram", a.instagram);
+  return body ? `<div class="agency">${esc(a.agency)}</div><ul>${body}</ul>` : "";
+}
+function saspHTML(p) {
+  if (!p) return "";
+  const title = p.url ? `<a href="${esc(p.url)}" target="_blank" rel="noopener">${esc(p.title || "System plan")}</a>` : esc(p.title || "No current plan found");
+  const up = p.update && p.update.underway ? `<div class="m">Update underway${p.update.expected ? `, expected ${esc(p.update.expected)}` : ""}${p.update.url ? ` · <a href="${esc(p.update.url)}" target="_blank" rel="noopener">details</a>` : ""}</div>` : "";
+  return `<div class="grp"><h4>State aviation system plan</h4><div class="study" style="border-top:0;padding-top:0"><div class="t">${title}</div>
+    <div class="m">${[p.publisher, p.consultant, p.edition_year].filter(Boolean).map(esc).join(" · ")}</div>
+    <div><span class="tag" style="background:var(--seq-${Math.max(1, SASP_LEVELS.indexOf(p.aam_content))})${SASP_LEVELS.indexOf(p.aam_content) > 3 ? ";color:#fff" : ""}">AAM: ${esc(SASP_LABEL[p.aam_content])}</span>${p.aam_where ? `<span class="tag">${esc(p.aam_where)}</span>` : ""}${p.verified ? "" : '<span class="tag warn">plan text not checked</span>'}${p.aam_url ? ` <a href="${esc(p.aam_url)}" target="_blank" rel="noopener">AAM section</a>` : ""}</div>
+    ${p.aam_summary ? `<p>${esc(p.aam_summary)}</p>` : ""}${up}</div></div>`;
+}
+const studyLink = s => s.url ? `<a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.title)}</a>` : esc(s.title);
+function studyHTML(s) {
+  const meta = [s.publisher, s.authors_or_consultant && s.authors_or_consultant !== s.publisher ? s.authors_or_consultant : null, s.date].filter(Boolean).map(esc).join(" · ");
+  return `<div class="study"><div class="t">${studyLink(s)}</div><div class="m">${meta}</div>
+    <div>${s.type ? `<span class="tag">${esc(s.type)}</span>` : ""}${s.place ? `<span class="tag">${esc(s.place)}</span>` : ""}${s.topic === "uas" ? '<span class="tag">drone (UAS)</span>' : ""}${s.status ? `<span class="tag" style="background:var(--seq-1)">${esc(s.status)}</span>` : ""}${s.verified ? "" : '<span class="tag warn">link not checked</span>'}</div>
+    ${s.summary ? `<p>${esc(s.summary)}</p>` : ""}</div>`;
+}
+function grouped(items) {
+  return LEVEL_ORDER.map(lv => {
+    const xs = items.filter(s => s.level === lv); if (!xs.length) return "";
+    return `<div class="grp"><h4>${esc(LEVEL_LABEL[lv])} <span class="tag">${xs.length}</span></h4>${xs.map(studyHTML).join("")}</div>`;
+  }).join("");
+}
+function renderPanel({title, sub, items, profile, extra}) {
+  const p = document.getElementById("panel");
+  let prof = "";
+  if (profile) {
+    const leg = (profile.legislation || []).map(l => `<li>${l.url ? `<a href="${esc(l.url)}" target="_blank" rel="noopener">${esc(l.cite)}</a>` : esc(l.cite)}${l.year ? ` (${l.year})` : ""}${l.summary ? ": " + esc(l.summary) : ""}</li>`).join("");
+    prof = `<dl class="kv">${profile.aam_lead ? `<dt>AAM lead</dt><dd>${esc(profile.aam_lead)}</dd>` : ""}${profile.task_force ? `<dt>Task force</dt><dd>${esc(profile.task_force)}</dd>` : ""}</dl>
+      ${leg ? `<div class="grp"><h4>Legislation</h4><ul style="margin:0;padding-left:18px">${leg}</ul></div>` : ""}
+      ${profile.notes ? `<p class="sub">${esc(profile.notes)}</p>` : ""}
+      ${saspHTML(profile.system_plan)}
+      ${(profile.agencies || []).length ? `<div class="grp links"><h4>Where they post</h4>${profile.agencies.map(linksHTML).join("")}</div>` : ""}`;
+  }
+  p.innerHTML = `<h3>${esc(title)}</h3><div class="sub">${esc(sub || "")}</div>${extra || ""}${prof}${items.length ? grouped(items) : '<p class="sub">No studies found with the current filters.</p>'}`;
+  p.scrollTop = 0;
+}
+function nationalPanel() {
+  const list = filtered();
+  const by = d3.rollup(list, v => v.length, s => s.level);
+  const top = d3.rollups(list, v => v.length, s => s.state).sort((a, b) => b[1] - a[1]).slice(0, 8);
+  const extra = `<div class="stats">${["state", "region", "county", "city", "airport", "multistate"].map(l => `<div class="stat"><b>${by.get(l) || 0}</b><span>${esc(LEVEL_LABEL[l].split(" (")[0])}</span></div>`).join("")}</div>
+    ${(() => { const ps = Object.values(S.states).map(p => p.system_plan).filter(Boolean); if (!ps.length) return "";
+      const withAam = ps.filter(p => SASP_LEVELS.indexOf(p.aam_content) >= 2).length, up = ps.filter(p => p.update && p.update.underway).length;
+      return `<div class="grp"><h4>State aviation system plans</h4><div class="sub">${withAam} of ${ps.length} current plans cover AAM in a section or more; ${up} updates underway. <a href="#" id="saspview">Shade the map by this</a></div></div>`; })()}
+    <div class="grp"><h4>Most studies</h4>${top.map(([st, n]) => `<button class="btn" style="margin:2px" data-st="${st}">${st} · ${n}</button>`).join("")}</div>
+    <p class="sub" style="margin-top:12px">Click a state, county or point to see its studies.</p>`;
+  renderPanel({title: "United States", sub: `${list.length} studies in ${new Set(list.map(s => s.state)).size} states and territories`, items: list.filter(s => s.level === "multistate"), extra});
+  document.querySelectorAll("#panel [data-st]").forEach(b => b.onclick = () => selectState(b.dataset.st));
+  const sv = document.getElementById("saspview");
+  if (sv) sv.onclick = e => { e.preventDefault(); document.getElementById("shade").value = "sasp"; document.getElementById("L-state").checked = true; drawStudiesMap(); };
+}
+function selectState(st) {
+  ui.state = st; ui.county = null; ui.point = null;
+  document.getElementById("crumb").textContent = stateName[st] || TERR_NAMES[st] || st;
+  const items = filtered().filter(s => inState(s, st));
+  const teams = E.teams.filter(t => t.states.some(x => x.state === st));
+  const extra = teams.length ? `<div class="grp"><h4>eIPP</h4>${teams.map(t => `<a href="#eipp/${t.id}">${esc(t.lead)}</a> (${roleText(t.states.find(x => x.state === st))})`).join("<br>")}</div>` : "";
+  renderPanel({title: stateName[st] || TERR_NAMES[st] || st, sub: `${items.length} studies`, items, profile: S.states[st], extra});
+  history.replaceState(null, "", "#studies/" + st);
+  drawStudiesMap();
+}
+function selectCounty(f) {
+  ui.county = f; ui.point = null; ui.state = POSTAL[f.slice(0, 2)];
+  const items = filtered().filter(s => s.counties.includes(f));
+  renderPanel({title: `${countyName[f]}, ${ui.state}`, sub: "County and regional studies", items});
+  drawStudiesMap();
+}
+
+// ---------- eIPP map ----------
+function drawEippMap() {
+  const svg = d3.select("#emap"); svg.selectAll("*").remove();
+  svg.append("defs").html(`<pattern id="hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="6" height="6" fill="var(--seq-0)"/><rect width="2.5" height="6" fill="var(--partner)"/></pattern>`);
+  const team = E.teams.find(t => t.id === ui.team);
+  const roleOf = {}, nTeams = {};
+  for (const t of E.teams) for (const x of t.states) if (x.confidence !== "low") nTeams[x.state] = (nTeams[x.state] || 0) + 1;
+  const lowOnly = new Set(E.teams.flatMap(t => t.states.filter(x => x.confidence === "low" && !nTeams[x.state]).map(x => x.state)));
+  if (team) for (const x of team.states) roleOf[x.state] = x.role === "lead" ? "lead" : x.confidence === "low" ? "low" : "partner";
+  const maxN = d3.max(Object.values(nTeams)) || 1;
+  const fill = st => team ? ({lead: "var(--lead)", partner: "var(--partner)", low: "url(#hatch)"}[roleOf[st]] || "var(--seq-0)")
+    : nTeams[st] ? `var(--seq-${Math.min(5, nTeams[st] + 1)})` : lowOnly.has(st) ? "url(#hatch)" : "var(--seq-0)";
+  svg.append("g").selectAll("path").data(stateFeats).join("path")
+    .attr("class", "state").attr("d", path).attr("fill", d => fill(POSTAL[d.id]))
+    .on("mousemove", (ev, d) => {
+      const st = POSTAL[d.id];
+      const ts = E.teams.filter(t => t.states.some(x => x.state === st));
+      showTip(ev, `<b>${esc(d.properties.name)}</b>${ts.length ? ts.map(t => esc(t.lead) + " (" + roleText(t.states.find(x => x.state === st)) + ")").join("<br>") : "Not in an eIPP team"}`);
+    })
+    .on("mouseleave", hideTip)
+    .on("click", (ev, d) => {
+      const st = POSTAL[d.id];
+      const ts = E.teams.filter(t => t.states.some(x => x.state === st));
+      if (ts.length === 1) selectTeam(ts[0].id); else if (ts.length) eippStatePanel(st, ts);
+    });
+  svg.append("path").datum(topojson.mesh(topo, topo.objects.nation)).attr("class", "nation").attr("d", path);
+
+  const teams = team ? [team] : E.teams;
+  const loc = [];
+  for (const t of teams) for (const l of t.locations || []) {
+    const xy = l.lat != null && l.lon != null && proj([+l.lon, +l.lat]); if (xy) loc.push({...l, x: xy[0], y: xy[1], team: t});
+  }
+  if (team) {
+    const byName = Object.fromEntries(loc.map(l => [l.name, l]));
+    svg.append("g").selectAll("path").data((team.routes || []).filter(r => byName[r.from] && byName[r.to])).join("path")
+      .attr("d", r => arcPath([byName[r.from].x, byName[r.from].y], [byName[r.to].x, byName[r.to].y])).attr("fill", "none")
+      .attr("stroke", "var(--route)").attr("stroke-width", 2).attr("stroke-linecap", "round").attr("opacity", .85);
+  }
+  svg.append("g").selectAll("circle").data(loc).join("circle")
+    .attr("class", "pt").attr("cx", d => d.x).attr("cy", d => d.y).attr("r", team ? 5 : 4).attr("fill", "var(--site)")
+    .on("mousemove", (ev, d) => showTip(ev, `<b>${esc(d.name)}</b>${esc([d.city, d.state].filter(Boolean).join(", "))}${d.kind ? "<br>" + esc(d.kind) : ""}<br>${esc(d.team.lead)}`))
+    .on("mouseleave", hideTip)
+    .on("click", (ev, d) => selectTeam(d.team.id));
+  svg.append("text").attr("class", "inset-label").attr("x", 120).attr("y", 595).text("Alaska (not to scale)");
+  svg.append("text").attr("class", "inset-label").attr("x", 300).attr("y", 595).text("Hawaii");
+
+  renderPartners(team);
+  document.getElementById("elegend").innerHTML = team
+    ? `<span class="sw" style="background:var(--lead)"></span> Lead state <span class="sw" style="background:var(--partner)"></span> Partner or operating area <span class="sw" style="background:repeating-linear-gradient(45deg,var(--partner) 0 2px,var(--seq-0) 2px 5px)"></span> Unconfirmed <span class="sw" style="background:var(--site);border-radius:50%"></span> Named site <span style="display:inline-block;width:18px;height:2px;background:var(--route)"></span> Route`
+    : `<span>Teams per state</span><span class="ramp">${d3.range(0, maxN + 1).map(i => `<i style="background:${i ? `var(--seq-${Math.min(5, i + 1)})` : "var(--seq-0)"}"></i>`).join("")}</span><span>0 to ${maxN} (confirmed)</span> <span class="sw" style="background:repeating-linear-gradient(45deg,var(--partner) 0 2px,var(--seq-0) 2px 5px)"></span> Unconfirmed only <span class="sw" style="background:var(--site);border-radius:50%"></span> Named site`;
+  document.getElementById("ecrumb").textContent = team ? team.lead : `All ${E.teams.length} teams · ${Object.keys(nTeams).length} states`;
+}
+// The FAA's March 9, 2026 selection release names each team's partners (sometimes "Other"); those are the primary list
+// Logo files in logos/partners/ for the companies the FAA named, with a display height that evens out their visual weight
+const PARTNER_LOGO = {Archer: ["archer.svg", 26], BETA: ["beta.svg", 24], Electra: ["electra.svg", 24], Joby: ["joby.png", 30], Wisk: ["wisk.svg", 26],
+  Ampaire: ["ampaire.png", 36], "Elroy Air": ["elroy.png", 36], "Reliable Robotics": ["reliable.png", 42]};
+function renderPartners(team) {
+  const names = team ? faaNamed(team) : d3.rollups(E.teams.flatMap(faaNamed), v => v.length, d => d).sort((a, b) => b[1] - a[1]).map(d => d[0]);
+  const n = name => E.teams.filter(t => faaNamed(t).includes(name)).length;
+  document.getElementById("epartners").innerHTML = `<h2>${team ? "FAA-listed partners" : "FAA-listed partners across all teams"}</h2>
+    <div class="plogos">${names.map(nm => { const l = PARTNER_LOGO[nm];
+      return `<div class="plogo">${l ? `<img src="logos/partners/${l[0]}" alt="${esc(nm)} logo" style="height:${l[1]}px">` : ""}<span>${esc(nm)}${team ? "" : ` · ${n(nm)} team${n(nm) > 1 ? "s" : ""}`}</span></div>`; }).join("")}</div>
+    ${team && (team.faa_partners || []).includes("Other") ? '<p class="more">The FAA also lists other partners without naming them. See the team details for partners named elsewhere.</p>' : ""}
+    ${team ? "" : '<p class="more">As named in the FAA and U.S. DOT selection announcement of March 9, 2026. Logos belong to their companies.</p>'}`;
+}
+const faaNamed = t => (t.faa_partners || []).filter(f => f !== "Other");
+const isFaa = (t, p) => faaNamed(t).some(f => p.name.toLowerCase().startsWith(f.toLowerCase()));
+const faaText = t => faaNamed(t).join(", ") + ((t.faa_partners || []).includes("Other") ? ", and others not named" : "");
+const roleText = x => esc(x.role) + (x.confidence === "low" ? ' <span class="tag warn">unconfirmed</span>' : "");
+function renderTeams() {
+  document.getElementById("teams").innerHTML = E.teams.map(t => `<div class="team${ui.team === t.id ? " sel" : ""}" data-id="${t.id}" tabindex="0" role="button">
+    <div class="t">${esc(t.lead)}</div><div class="m">${t.states.length} state${t.states.length > 1 ? "s" : ""} · ${faaNamed(t).length} FAA-listed partners</div></div>`).join("");
+  document.querySelectorAll(".team").forEach(el => {
+    el.onclick = () => selectTeam(el.dataset.id);
+    el.onkeydown = e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); selectTeam(el.dataset.id); } };
+  });
+}
+function eippOverview() {
+  const p = E.program || {};
+  const states = new Set(E.teams.flatMap(t => t.states.map(x => x.state)));
+  const firm = new Set(E.teams.flatMap(t => t.states.filter(x => x.confidence !== "low").map(x => x.state)));
+  const cos = d3.rollups(E.teams.flatMap(faaNamed), v => v.length, d => d).sort((a, b) => b[1] - a[1]);
+  document.getElementById("epanel").innerHTML = `<h3>${esc(p.name || "eIPP")}</h3>
+    <div class="sub">Program established ${esc(p.announced || "")} · teams selected ${esc(p.selections_announced || p.announced || "")}</div><p>${esc(p.summary || "")}</p>
+    <div class="stats"><div class="stat"><b>${E.teams.length}</b><span>teams</span></div><div class="stat"><b>${firm.size}</b><span>states confirmed (${states.size} incl. unconfirmed)</span></div><div class="stat"><b>${cos.length}</b><span>FAA-listed companies</span></div></div>
+    <div class="grp"><h4>FAA-listed companies by number of teams</h4><div class="chips">${cos.map(([n, k]) => `<span>${esc(n)} · ${k}</span>`).join("")}</div></div>
+    ${(p.ffr_notices || []).length ? `<div class="grp"><h4>Federal Register</h4>${p.ffr_notices.map(n => `<div><a href="${esc(n.url)}" target="_blank" rel="noopener">${esc(n.title)}</a> <span class="m">${esc(n.date)}</span></div>`).join("")}</div>` : ""}
+    ${(E.non_selected || []).length ? `<div class="grp"><h4>Other applicants (not selected)</h4>${E.non_selected.map(n => `<div>${n.source ? `<a href="${esc(n.source)}" target="_blank" rel="noopener">${esc(n.applicant)}</a>` : esc(n.applicant)} <span class="m">${esc(n.state || "")}</span>${n.confidence === "low" ? ' <span class="tag warn">unconfirmed</span>' : ""}</div>`).join("")}</div>` : ""}
+    ${(E.notes || []).length ? `<div class="grp"><h4>Notes</h4><ul style="margin:0;padding-left:18px;color:var(--ink-2)">${E.notes.map(n => `<li>${esc(n)}</li>`).join("")}</ul></div>` : ""}
+    <p class="sub">Pick a team to see its states, partners and sites.</p>`;
+}
+function eippStatePanel(st, ts) {
+  document.getElementById("epanel").innerHTML = `<h3>${esc(stateName[st])}</h3><div class="sub">In ${ts.length} eIPP teams</div>${ts.map(t => `<div class="team" data-id="${t.id}" role="button" tabindex="0"><div class="t">${esc(t.lead)}</div><div class="m">${roleText(t.states.find(x => x.state === st))}${t.states.find(x => x.state === st).note ? " · " + esc(t.states.find(x => x.state === st).note) : ""}</div></div>`).join("")}`;
+  document.querySelectorAll("#epanel .team").forEach(el => el.onclick = () => selectTeam(el.dataset.id));
+}
+function selectTeam(id) {
+  ui.team = id;
+  const t = E.teams.find(x => x.id === id);
+  if (id) history.replaceState(null, "", "#eipp/" + id);
+  renderTeams(); drawEippMap();
+  if (!t) return eippOverview();
+  const src = u => u ? ` <a href="${esc(u)}" target="_blank" rel="noopener" title="Source">↗</a>` : "";
+  const states = t.states.map(x => `<li><b>${esc(stateName[x.state] || x.state)}</b> · ${roleText(x)}${x.note ? ": " + esc(x.note) : ""}</li>`).join("");
+  const dis = (t.disagreements || []).map(x => `<li>${esc(x)}</li>`).join("");
+  const indLi = x => `<li><b>${esc(x.name)}</b>${x.aircraft ? " · " + esc(x.aircraft) : ""}${x.mission ? "<br><span class=m>" + esc(x.mission) + "</span>" : ""}${src(x.source)}</li>`;
+  const ind = t.industry_partners.filter(x => isFaa(t, x)).map(indLi).join("") + ((t.faa_partners || []).includes("Other") ? '<li><span class="m">Other: the FAA lists further partners without naming them.</span></li>' : "");
+  const oth = t.industry_partners.filter(x => !isFaa(t, x)).map(indLi).join("")
+    + (t.other_partners || []).map(x => `<li>${esc(x.name)}${x.type ? ` <span class="tag">${esc(x.type)}</span>` : ""}${src(x.source)}</li>`).join("");
+  const locs = (t.locations || []).map(x => `<li>${esc(x.name)}${x.city ? " · " + esc(x.city) : ""}${x.state ? ", " + esc(x.state) : ""}${x.kind ? ` <span class="tag">${esc(x.kind)}</span>` : ""}${src(x.source)}</li>`).join("");
+  const ms = (t.milestones || []).slice().sort((a, b) => a.date < b.date ? -1 : 1).map(x => `<li><b>${esc(x.date)}</b> ${esc(x.event)}${src(x.source)}</li>`).join("");
+  const rel = S.studies.filter(s => t.states.some(x => inState(s, x.state)) && s.level === "state" && s.topic !== "uas").length;
+  document.getElementById("epanel").innerHTML = `<h3>${esc(t.lead)}</h3><div class="sub">${esc(t.name || "")}</div><p>${esc(t.summary || "")}</p>
+    <div class="chips">${(t.concepts || []).map(c => `<span>${esc(c)}</span>`).join("")}</div>
+    ${t.lead_links ? `<div class="grp links"><h4>Where the lead posts</h4>${linksHTML(t.lead_links)}</div>` : ""}
+    <div class="grp"><h4>States <span class="tag">${t.states.length}</span></h4><ul style="margin:0;padding-left:18px">${states}</ul></div>
+    <div class="grp"><h4>FAA-listed partners</h4><ul style="margin:0;padding-left:18px">${ind}</ul></div>
+    ${oth ? `<div class="grp"><h4>Other partners (named by the team, companies or press)</h4><ul style="margin:0;padding-left:18px">${oth}</ul></div>` : ""}
+    ${locs ? `<div class="grp"><h4>Sites</h4><ul style="margin:0;padding-left:18px">${locs}</ul></div>` : ""}
+    ${ms ? `<div class="grp"><h4>Milestones</h4><ul style="margin:0;padding-left:18px">${ms}</ul></div>` : ""}
+    ${dis ? `<div class="grp"><h4>Where sources disagree</h4><ul style="margin:0;padding-left:18px;color:var(--ink-2)">${dis}</ul></div>` : ""}
+    ${rel ? `<div class="grp"><a href="#studies/${t.lead_state}">${rel} statewide studies in this team's states</a></div>` : ""}
+    <div class="grp"><h4>Sources</h4>${(t.sources || []).map((u, i) => `<div><a href="${esc(u)}" target="_blank" rel="noopener">${esc(host(u))}</a></div>`).join("")}</div>`;
+}
+
+
+// ---------- eIPP band (Ten Across style) ----------
+const BAND = {land: "#E3E6E8", t1: "#F2D98A", t2: "#EC9A5B", t3: "#D9512F", pale: "#F7EED3"};
+let bandTeam = null;
+const shortLead = s => s.replace(/ \(.*\)/, "").replace("Department of Transportation and Development", "DOTD").replace("Department of Transportation", "DOT").replace("Port Authority of New York and New Jersey", "Port Authority of NY & NJ").replace("City of Albuquerque Aviation Department", "City of Albuquerque");
+const firm = t => t.states.filter(x => x.confidence !== "low");
+// A slightly curved route between two projected points: a quadratic arc bowed 15% of its length to one side
+function arcPath(a, b) {
+  const dx = b[0] - a[0], dy = b[1] - a[1], bend = 0.15;
+  const mx = (a[0] + b[0]) / 2 - dy * bend, my = (a[1] + b[1]) / 2 + dx * bend;
+  return `M${a[0]},${a[1]}Q${mx},${my} ${b[0]},${b[1]}`;
+}
+// Draws the states once; later calls cross-fade the tints and redraw routes for the current step
+function drawEippBand() {
+  const svg = d3.select("#ebmap");
+  const team = E.teams.find(t => t.id === bandTeam);
+  const nTeams = {}, lowOnly = new Set();
+  for (const t of E.teams) for (const x of t.states) if (x.confidence !== "low") nTeams[x.state] = (nTeams[x.state] || 0) + 1;
+  for (const t of E.teams) for (const x of t.states) if (x.confidence === "low" && !nTeams[x.state]) lowOnly.add(x.state);
+  const role = {};
+  if (team) for (const x of team.states) role[x.state] = x.role === "lead" ? "lead" : x.confidence === "low" ? "low" : "partner";
+  const fill = st => team ? ({lead: BAND.t3, partner: BAND.t2, low: BAND.t1}[role[st]] || BAND.land)
+    : nTeams[st] >= 3 ? BAND.t3 : nTeams[st] === 2 ? BAND.t2 : nTeams[st] === 1 ? BAND.t1 : lowOnly.has(st) ? BAND.pale : BAND.land;
+  if (svg.select("g.states").empty()) {
+    const zg = svg.append("g").attr("class", "zoom");
+    zg.append("g").attr("class", "states").selectAll("path").data(stateFeats).join("path")
+      .attr("class", "st").attr("d", path).attr("fill", BAND.land)
+      .on("mousemove", (ev, d) => {
+        const st = POSTAL[d.id], ts = E.teams.filter(t => t.states.some(x => x.state === st));
+        showTip(ev, `<b>${esc(d.properties.name)}</b>${ts.length ? ts.map(t => esc(t.lead) + " (" + roleText(t.states.find(x => x.state === st)) + ")").join("<br>") : "Not in an eIPP team"}`);
+      })
+      .on("mouseleave", hideTip);
+    zg.append("g").attr("class", "routes");
+  }
+  // zoom to the team's states (all teams: whole country), capped so small teams keep context
+  let k = 1, x = 0, y = 0;
+  if (team) {
+    const fs = stateFeats.filter(f => team.states.some(s => s.state === POSTAL[f.id]) && !["02", "15"].includes(f.id));
+    const bs = fs.map(f => path.bounds(f));
+    const x0 = d3.min(bs, b => b[0][0]), y0 = d3.min(bs, b => b[0][1]), x1 = d3.max(bs, b => b[1][0]), y1 = d3.max(bs, b => b[1][1]);
+    k = Math.max(1, Math.min(2.4, .7 / Math.max((x1 - x0) / 975, (y1 - y0) / 610)));
+    x = 975 / 2 - k * (x0 + x1) / 2; y = 610 / 2 - k * (y0 + y1) / 2;
+  }
+  svg.select("g.zoom").transition().duration(700).attr("transform", `translate(${x},${y}) scale(${k})`);
+  svg.select("g.states").selectAll("path").transition().duration(450)
+    .attr("fill", d => fill(POSTAL[d.id])).attr("fill-opacity", d => fill(POSTAL[d.id]) === BAND.land ? 1 : .85);
+
+  // routes as a curved black line with dot stops; sites without a route get a dot only
+  const g = svg.select("g.routes"); g.selectAll("*").remove();
+  for (const t of team ? [team] : E.teams) {
+    const loc = Object.fromEntries((t.locations || []).filter(l => l.lat != null).map(l => [l.name, proj([+l.lon, +l.lat])]).filter(([, xy]) => xy));
+    for (const r of t.routes || []) if (loc[r.from] && loc[r.to])
+      g.append("path").attr("d", arcPath(loc[r.from], loc[r.to])).attr("fill", "none")
+        .attr("stroke", "#1E1E1E").attr("stroke-width", team ? 2.4 : 1.8).attr("stroke-linecap", "round");
+    for (const [nm, xy] of Object.entries(loc))
+      g.append("circle").attr("cx", xy[0]).attr("cy", xy[1]).attr("r", (team ? 4.2 : 3.4) / Math.sqrt(k)).attr("stroke-width", 1 / k).attr("fill", "#1E1E1E").attr("stroke", "#fff").attr("stroke-width", 1)
+        .on("mousemove", ev => showTip(ev, `<b>${esc(nm)}</b>${esc(t.lead)}`)).on("mouseleave", hideTip);
+  }
+  g.attr("opacity", 0).transition().duration(450).attr("opacity", 1);
+
+  const n = team ? firm(team).length : E.teams.length;
+  const num = document.getElementById("eb-num");
+  num.textContent = team ? shortLead(team.lead) : `${n} teams`;
+  num.classList.toggle("lead", !!team);
+  num.classList.toggle("long", !!team && shortLead(team.lead).length > 22);
+  const logo = document.getElementById("eb-logo"), file = team && LEAD_LOGO[team.id];
+  logo.hidden = !file;
+  if (file) { logo.src = "logos/" + file[0]; logo.style.height = file[1] + "px"; logo.classList.toggle("gray", !!file[2]); logo.alt = shortLead(team.lead) + " logo"; }
+  const nm = team && team.name ? team.name.replace(shortLead(team.lead), "").replace(/^[\s,:-]+/, "") : "";
+  document.getElementById("eb-sub").textContent = team ? `${n} confirmed ${n === 1 ? "state" : "states"}${nm ? " · " + nm : ""}`
+    : `in the FAA eVTOL Integration Pilot Program, flying in ${Object.keys(nTeams).length} confirmed states.`;
+  document.getElementById("eb-lgt").textContent = team ? "State role on this team" : "eIPP teams per state (confirmed)";
+  const keys = team ? [[BAND.t3, "Lead"], [BAND.t2, "Partner or operating area"], [BAND.t1, "Unconfirmed"]] : [[BAND.t3, "3 or more teams"], [BAND.t2, "2 teams"], [BAND.t1, "1 team"], [BAND.pale, "Unconfirmed only"]];
+  document.getElementById("eb-lgk").innerHTML = keys.map(([c, l]) => `<li><i style="background:${c}"></i>${l}</li>`).join("");
+  document.querySelectorAll("#eb-teams button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.id === (bandTeam || ""))));
+  document.querySelectorAll("#eb-steps .step").forEach(s => s.classList.toggle("on", (s.dataset.id || null) === bandTeam));
+}
+function setBandTeam(id) { if (id === bandTeam) return; bandTeam = id; drawEippBand(); }
+// one scroll step for all teams, then one per team; the step crossing mid-screen sets the map
+function buildBandSteps() {
+  const first = E.teams.map(t => (t.milestones || []).filter(m => /flight|flew|flown|launch|operation/i.test(m.event)).sort((a, b) => a.date < b.date ? -1 : 1)[0]);
+  const cards = [`<div class="step" data-id=""><div class="card2"><div class="n">All teams</div><h3>Eight teams, selected March 9, 2026</h3>
+      <p>Each step below shows one team: its lead, every associated state, its companies and its announced routes. Darker states belong to more teams.</p></div></div>`]
+    .concat(E.teams.map((t, i) => {
+      const low = t.states.filter(x => x.confidence === "low").length;
+      const st = firm(t).map(x => (stateName[x.state] || x.state) + (x.role === "lead" ? " (lead)" : "")).join(", ") + (low ? `, plus ${low} unconfirmed` : "");
+      const cos = faaText(t);
+      const m = first[i];
+      return `<div class="step" data-id="${t.id}"><div class="card2"><div class="n">Team ${i + 1} of ${E.teams.length}</div><h3>${esc(shortLead(t.lead))}</h3>
+        <p><span class="st">States:</span> ${esc(st)}</p><p><span class="st">FAA-listed partners:</span> ${esc(cos)}</p>
+        ${m ? `<p><span class="st">${esc(m.date)}:</span> ${esc(m.event)}</p>` : ""}<p><a href="#eipp/${t.id}">Team details</a></p></div></div>`;
+    }));
+  document.getElementById("eb-steps").innerHTML = cards.join("");
+  document.getElementById("eb-teams").innerHTML = E.teams.map(t => `<li><button type="button" data-id="${t.id}" aria-pressed="false">${esc(shortLead(t.lead))}</button></li>`).join("");
+  document.querySelectorAll("#eb-teams button").forEach(b => b.onclick = () =>
+    document.querySelector(`#eb-steps .step[data-id="${b.dataset.id}"]`).scrollIntoView({behavior: "smooth", block: "center"}));
+  const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) setBandTeam(e.target.dataset.id || null); }), {rootMargin: "-50% 0px -50% 0px"});
+  document.querySelectorAll("#eb-steps .step").forEach(s => io.observe(s));
+}
+// faint contour lines from a smooth random field, kept to two corners like the reference
+function drawBandTopo() {
+  const svg = d3.select("#ebtopo"), w = 160, h = 100, vals = new Float64Array(w * h);
+  const rnd = d3.randomLcg(7), waves = d3.range(9).map(() => [rnd() * .12 + .02, rnd() * .12 + .02, rnd() * 6.3, rnd() * 6.3]);
+  for (let j = 0; j < h; j++) for (let i = 0; i < w; i++) vals[j * w + i] = d3.sum(waves, ([a, b, p, q]) => Math.sin(i * a + p) * Math.cos(j * b + q));
+  const ext = d3.extent(vals), cs = d3.contours().size([w, h]).thresholds(d3.range(ext[0], ext[1], (ext[1] - ext[0]) / 34))(vals);
+  svg.attr("viewBox", `0 0 ${w} ${h}`).attr("preserveAspectRatio", "xMidYMid slice");
+  svg.append("defs").html(`<radialGradient id="tg1" cx="100%" cy="0%" r="55%"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#000"/></radialGradient><radialGradient id="tg2" cx="0%" cy="100%" r="50%"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#000"/></radialGradient><mask id="tm"><rect width="${w}" height="${h}" fill="url(#tg1)"/><rect width="${w}" height="${h}" fill="url(#tg2)" style="mix-blend-mode:screen"/></mask>`);
+  svg.append("g").attr("mask", "url(#tm)").selectAll("path").data(cs).join("path").attr("d", d3.geoPath()).attr("fill", "none").attr("stroke", "#DCE0E2").attr("stroke-width", .12);
+}
+// ---------- routing ----------
+// One page: the hash picks a section to scroll to, plus an optional state (#studies/NC) or team (#eipp/ncdot)
+function route() {
+  const [v, arg] = location.hash.replace(/^#/, "").split("/");
+  if (v === "studies" && arg && FIPS[arg]) selectState(arg);
+  const team = v === "eipp" && arg && E.teams.some(t => t.id === arg) ? arg : null;
+  if (team) selectTeam(team);
+  const target = v === "eipp" ? (arg ? "team-details" : "eippband") : v === "about" ? "about" : v === "studies" && arg ? "v-studies" : v === "studies" ? "studies-head" : null;
+  if (target) document.getElementById(target).scrollIntoView({behavior: "smooth", block: "start"});
+  const cur = v === "eipp" ? (arg ? "details" : "eipp") : v || "studies";
+  document.querySelectorAll("nav.tabs a").forEach(a => a.dataset.view === cur ? a.setAttribute("aria-current", "page") : a.removeAttribute("aria-current"));
+}
+
+function resetStudies() {
+  ui.state = ui.county = ui.point = null;
+  document.getElementById("crumb").textContent = "United States";
+  history.replaceState(null, "", "#studies");
+  drawStudiesMap(); nationalPanel();
+}
+
+
+
+Promise.all([d3.json("geo/counties-albers-10m.json"), d3.json("data/studies.json", {cache: "no-cache"}), d3.json("data/eipp.json", {cache: "no-cache"})]).then(([t, s, e]) => {
+  topo = t; S = s; E = e;
+  stateFeats = topojson.feature(t, t.objects.states).features;
+  countyFeats = topojson.feature(t, t.objects.counties).features;
+  for (const f of stateFeats) stateName[POSTAL[f.id]] = f.properties.name;
+  for (const f of countyFeats) countyName[f.id] = f.properties.name;
+  Object.assign(stateName, TERR_NAMES);
+  document.getElementById("asof").textContent = `Updated ${s.as_of}`;
+  const aam = s.studies.filter(x => x.topic !== "uas");
+  document.getElementById("h-studies").textContent = aam.length;
+  document.getElementById("h-states").textContent = new Set(aam.map(x => x.state).filter(x => FIPS[x] && !TERRITORIES.includes(x))).size;
+  document.getElementById("h-sasp").textContent = Object.values(s.states).filter(p => p.system_plan && SASP_LEVELS.indexOf(p.system_plan.aam_content) >= 2).length;
+  document.getElementById("h-eipp").textContent = e.teams.length;
+  const types = [...new Set(s.studies.map(x => x.type).filter(Boolean))].sort();
+  document.getElementById("ftype").insertAdjacentHTML("beforeend", types.map(x => `<option>${esc(x)}</option>`).join(""));
+  const srcs = new Set([...(e.teams || []).flatMap(t => t.sources || [])]);
+  document.getElementById("srcs").innerHTML = `<li>FAA eIPP selection announcement and team sources (${srcs.size} links, listed on each team)</li><li>State DOT, MPO, county, city and airport publications (linked on each study)</li>`;
+  ["q", "ftype", "y0", "y1", "fver", "shade", "L-state", "L-county", "L-region", "L-city", "L-airport", "L-uas", "L-eipp"].forEach(id =>
+    document.getElementById(id).addEventListener("input", () => { drawStudiesMap(); if (ui.state) selectState(ui.state); else nationalPanel(); }));
+  document.getElementById("reset").onclick = resetStudies;
+  document.getElementById("ereset").onclick = () => selectTeam(null);
+  document.getElementById("togglelist").onclick = ev => {
+    ui.list = !ui.list;
+    document.getElementById("map").style.display = ui.list ? "none" : "";
+    document.getElementById("listview").style.display = ui.list ? "block" : "none";
+    ev.target.textContent = ui.list ? "Show map" : "Show as list";
+  };
+  renderTeams();
+  drawBandTopo(); buildBandSteps(); drawEippBand();
+  drawStudiesMap(); nationalPanel(); selectTeam(null);
+  addEventListener("hashchange", route);
+  if (location.hash) route();
+});
+</script>
+</body>
+</html>
